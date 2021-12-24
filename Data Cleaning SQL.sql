@@ -1,3 +1,4 @@
+#Change date format in column SaleDate
 select SaleDate, convert(date, SaleDate)
 from dbo.Nashville
 alter table Nashville
