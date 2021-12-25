@@ -1,0 +1,47 @@
+#Memahami Table
+select * from orders_1 limit 5;
+select * from orders_2 limit 5;
+select * from customer limit 5
+
+#Total Penjualan dan Revenue pada Quarter 1 dan 2
+select sum(quantity) as total_penjualan, sum(quantity*priceEach) as revenue from orders_1 where status = 'Shipped';
+select sum(quantity) as total_penjualan, sum(quantity*priceEach) as revenue from orders_2 where status='Shipped'
+
+#Persentasi Keseluruhan Penjualan
+select quarter, sum(quantity) as total_penjualan, sum(quantity*priceEach) as revenue from
+  (select orderNumber, status, quantity, priceEach,'1' as quarter from orders_1
+  union
+  select orderNumber, status, quantity, priceEach, '2' as quarter from orders_2) 
+as tabel_a
+where status='Shipped'
+group by quarter
+
+#Jumlah customer tiap quarter
+select quarter, count(distinct customerID) as total_customers from
+  (select customerID, createDate, QUARTER(createDate) as quarter from customer where createDate between '2004-01-01' and '2004-06-30')
+as tabel_b
+group by quarter
+
+#Customer yang sudah melakukan transaksi
+select quarter, count(distinct customerID) as total_customers from 
+  (select customerID, createDate, QUARTER(createDate) as quarter from customer where createDate between '2004-01-01' and '2004-06-30') 
+as tabel_b where customerID IN 
+  (select distinct customerID from orders_1 
+  union 
+  select distinct customerID from orders_2)
+group by quarter
+
+#Kategori produk apa yang paling sering diorder di quarter 2
+select* from
+  (select categoryID,count(distinct orderNumber) as total_order,sum(quantity) as total_penjualan from
+    (select productCode, orderNumber, quantity, status, left(productCode,3) as categoryID from orders_2 where status ='Shipped')tabel_c	
+  group by categoryID)a
+order by total_order Desc
+
+#Berapa banyak customer yang tetap bertransaksi setelah transaksi pertamanya
+#Menghitung total unik customers yang transaksi di quarter_1
+select count (distinct customerID) as total_customers FROM orders_1;
+#output = 25
+select
+'1' as quarter, count(distinct customerID)/25*100 as Q2 from orders_1
+where customerID IN(select distinct customerID from orders_2)
