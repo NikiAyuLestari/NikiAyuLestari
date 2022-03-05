@@ -1,6 +1,5 @@
 - 👋 Hi, I’m @NikiAyuLestari
 - 👀 I’m interested in data analysis
-- 🌱 I’m currently learning SQL, R, and data visualization
 - 📫 How to reach me : hit me up at nikialestari27@gmail.com
 
 <!---
